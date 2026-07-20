@@ -1,0 +1,30 @@
+╔══════════════════════════════════════════════════════╗
+║  🚀 د Netlify څخه اپلوډ لارښوونه                    ║
+╚══════════════════════════════════════════════════════╝
+
+🎯 ستاسو لینک: https://charming-biscochitos-56a327.netlify.app/
+
+📌 اپلوډ لاره:
+-----------------
+1. ZIP ډاونلوډ کړئ (currency-app.zip)
+2. استخراج یې کړئ
+3. https://app.netlify.com/ پاسور ته لاړ شئ
+4. د "charming-biscochitos-56a327" سایټ ته لاړ شئ
+5. "Deploys" ټب کلیک کړئ
+6. "Deploy manually" برخه کې د currency-app فولډر
+   ټول فایلونه کش کړئ (drag & drop):
+   - index.html
+   - style.css
+   - app.js
+   - sw.js
+   - manifest.webmanifest
+   - developer.jpg
+7. ۳۰ ثانیې انتظار وکړئ
+8. ✅ تازه شو!
+
+⚠️ مهم:
+- لینک به بدل نشي (همدا charming-biscochitos...)
+- یوازې محتوا تازه کېږي
+- د Android کې د PWA اپډیټ لپاره:
+  → Chrome کې Cache پاک کړئ
+  → بیا بیا خلاص کړئ

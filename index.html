@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ps" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f766e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>نرخونو کنټرولر - نعمان الله بهار</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== Bottom Navigation (6 tabs) ===== -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="calc">
+      <span class="nav-icon">⚡</span>
+      <span class="nav-label" data-i18n="navCalc">محاسبه</span>
+    </button>
+    <button class="nav-item" data-tab="rates">
+      <span class="nav-icon">📊</span>
+      <span class="nav-label" data-i18n="navRates">نرخونه</span>
+    </button>
+    <button class="nav-item" data-tab="trade">
+      <span class="nav-icon">💼</span>
+      <span class="nav-label" data-i18n="navTrade">سوداګري</span>
+    </button>
+    <button class="nav-item" data-tab="profit">
+      <span class="nav-icon">💰</span>
+      <span class="nav-label" data-i18n="navProfit">ګټه/تاوان</span>
+    </button>
+    <button class="nav-item" data-tab="reports">
+      <span class="nav-icon">📈</span>
+      <span class="nav-label" data-i18n="navReports">راپورونه</span>
+    </button>
+    <button class="nav-item" data-tab="about">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label" data-i18n="navAbout">جوړونکی</span>
+    </button>
+  </nav>
+
+  <!-- ===== Header ===== -->
+  <header class="header">
+    <div class="header-top">
+      <h1><span class="logo-icon">💱</span> <span data-i18n="appTitle">نرخونو کنټرولر</span></h1>
+      <button id="langToggle" class="icon-btn" title="ژبه">PS/EN</button>
+    </div>
+    <p class="subtitle" data-i18n="subtitle">د اسعارو سوداګري — ګټه او تاوان</p>
+    <div class="last-update">
+      <span data-i18n="lastUpdate">وروستی اپډیٹ:</span>
+      <span id="lastUpdateTime">—</span>
+    </div>
+  </header>
+
+  <!-- ===== Tab 1: Quick Calculator ===== -->
+  <section class="tab-content active" id="tab-calc">
+    <div class="card calc-card">
+      <h2><span class="card-icon">⚡</span> <span data-i18n="quickCalc">چټک محاسبه</span></h2>
+
+      <div class="input-row">
+        <label data-i18n="amount">مقدار</label>
+        <input type="number" id="calcAmount" inputmode="decimal" placeholder="0" value="300">
+      </div>
+
+      <div class="input-row">
+        <label data-i18n="fromCurrency">کرنسی</label>
+        <select id="calcCurrency"></select>
+      </div>
+
+      <div class="rate-mode-row">
+        <label data-i18n="rateMode">د نرخ ډول:</label>
+        <div class="toggle-group">
+          <button class="toggle-btn active" data-mode="buy" data-i18n="buy">خرید</button>
+          <button class="toggle-btn" data-mode="sell" data-i18n="sell">فروش</button>
+          <button class="toggle-btn" data-mode="both" data-i18n="both">دواړه</button>
+        </div>
+      </div>
+
+      <div id="calcResults" class="calc-results"></div>
+    </div>
+  </section>
+
+  <!-- ===== Tab 2: Rates Editor ===== -->
+  <section class="tab-content" id="tab-rates">
+    <div class="card">
+      <div class="card-header">
+        <h2><span class="card-icon">📊</span> <span data-i18n="ratesEditor">نرخونه</span></h2>
+        <div class="header-actions">
+          <button id="addCurrencyBtn" class="btn-primary" data-i18n="addCurrency">+ کرنسی</button>
+        </div>
+      </div>
+
+      <div class="base-currency-box">
+        <div class="step-badge" data-i18n="step1">مرحله ۱</div>
+        <label data-i18n="baseCurrencyLabel">اصلی کرنسی وټاکئ</label>
+        <div class="base-currency-row">
+          <select id="baseCurrencySelect"></select>
+          <button id="editBaseBtn" class="btn-secondary btn-sm" data-i18n="edit">تعدیل</button>
+        </div>
+        <p class="base-hint" data-i18n="baseHint">⚠️ ټول نرخونه د همدې کرنسۍ په مقابل کې محاسبه کېږي</p>
+      </div>
+
+      <div id="baseRatesBox" class="base-rates-box hidden">
+        <div class="step-badge" data-i18n="step2">مرحله ۲</div>
+        <label data-i18n="baseRatesLabel">د اصلی کرنسۍ نرخ (افغانۍ کې)</label>
+        <div class="base-rates-inputs">
+          <div class="rate-input-group buy">
+            <label data-i18n="buyLabel">د خرید نرخ</label>
+            <input type="number" inputmode="decimal" step="0.0001" id="baseBuyRate" placeholder="0">
+          </div>
+          <div class="rate-input-group sell">
+            <label data-i18n="sellLabel">د فروش نرخ</label>
+            <input type="number" inputmode="decimal" step="0.0001" id="baseSellRate" placeholder="0">
+          </div>
+        </div>
+        <p class="base-hint" data-i18n="autoHint">💡 نورې ټولې کرنسۍ اتومات محاسبه کېږي</p>
+      </div>
+
+      <div id="allRatesBox" class="all-rates-box hidden">
+        <div class="step-badge" data-i18n="step3">مرحله ۳</div>
+        <label data-i18n="otherRatesLabel">نورې کرنسۍ (اتومات محاسبه شوې)</label>
+        <div id="ratesContainer" class="rates-container"></div>
+        <div class="save-bar">
+          <button id="saveRatesBtn" class="btn-primary big-btn" data-i18n="save">💾 ټول خوندي کړئ</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Tab 3: Trade (NEW) ===== -->
+  <section class="tab-content" id="tab-trade">
+    <div class="card trade-card">
+      <h2><span class="card-icon">💼</span> <span data-i18n="newTrade">نوې سوداګري</span></h2>
+
+      <div class="trade-direction-row">
+        <button class="trade-direction-btn active" data-direction="buy">
+          <span class="td-icon">📥</span>
+          <span data-i18n="iBuy">زه اخلم</span>
+          <span class="td-sub" data-i18n="iBuySub">پیسې ورکوم، کرنسی اخلم</span>
+        </button>
+        <button class="trade-direction-btn" data-direction="sell">
+          <span class="td-icon">📤</span>
+          <span data-i18n="iSell">زه خرڅوم</span>
+          <span class="td-sub" data-i18n="iSellSub">کرنسی ورکوم، پیسې اخلم</span>
+        </button>
+      </div>
+
+      <div class="trade-form">
+        <div class="trade-row">
+          <div class="trade-col">
+            <label class="trade-label" data-i18n="iGive">زه ورکوم:</label>
+            <div class="trade-input-wrap">
+              <input type="number" id="tradeGiveAmount" inputmode="decimal" placeholder="0" class="trade-amount">
+              <select id="tradeGiveCurrency" class="trade-currency-select"></select>
+            </div>
+            <div class="trade-rate-info">
+              <span data-i18n="rate">نرخ:</span>
+              <span id="tradeGiveRate" class="trade-rate-value">—</span>
+            </div>
+          </div>
+          <div class="trade-swap-btn-wrap">
+            <button id="swapBtn" class="swap-btn" title="بدل کړئ">⇄</button>
+          </div>
+          <div class="trade-col">
+            <label class="trade-label" data-i18n="iGet">زه اخلم:</label>
+            <div class="trade-input-wrap">
+              <input type="number" id="tradeGetAmount" inputmode="decimal" placeholder="0" class="trade-amount" readonly>
+              <select id="tradeGetCurrency" class="trade-currency-select"></select>
+            </div>
+            <div class="trade-rate-info">
+              <span data-i18n="rate">نرخ:</span>
+              <span id="tradeGetRate" class="trade-rate-value">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="trade-cost-summary">
+          <div class="cost-row">
+            <span data-i18n="myCost">زما لګښت (افغانۍ):</span>
+            <span id="myCostValue" class="cost-value">— AFN</span>
+          </div>
+          <div class="cost-row">
+            <span data-i18n="myRevenue">زما عاید (افغانۍ):</span>
+            <span id="myRevenueValue" class="cost-value">— AFN</span>
+          </div>
+          <div class="cost-row profit-row">
+            <span data-i18n="profit">ګټه/تاوان:</span>
+            <span id="profitValue" class="cost-value profit-value">— AFN</span>
+          </div>
+        </div>
+
+        <button id="executeTradeBtn" class="btn-primary big-btn" data-i18n="executeTrade">✅ سوداګري ثبت کړئ</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2><span class="card-icon">📋</span> <span data-i18n="todayTrades">د نن ورځې سوداګري</span></h2>
+        <button id="clearTradesBtn" class="btn-danger" data-i18n="clearAll">🗑️ ټول پاک</button>
+      </div>
+      <div id="todayTrades" class="trades-list"></div>
+    </div>
+  </section>
+
+  <!-- ===== Tab 4: Profit/Loss Analysis (NEW) ===== -->
+  <section class="tab-content" id="tab-profit">
+    <div class="card profit-summary-card">
+      <h2><span class="card-icon">💰</span> <span data-i18n="profitSummary">د ګټې/تاوان لنډیز</span></h2>
+
+      <div class="big-profit-display">
+        <div class="big-profit-label" data-i18n="totalProfit">ټوله ګټه/تاوان:</div>
+        <div id="totalProfitValue" class="big-profit-value">0 AFN</div>
+        <div class="big-profit-sub" id="totalProfitSub">—</div>
+      </div>
+
+      <div class="profit-stats">
+        <div class="stat-box">
+          <div class="stat-label" data-i18n="totalTrades">ټولې سوداګري</div>
+          <div id="totalTradesCount" class="stat-value">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label" data-i18n="winningTrades">ګټونکې</div>
+          <div id="winningTradesCount" class="stat-value profit-text">0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label" data-i18n="losingTrades">تاوانمنې</div>
+          <div id="losingTradesCount" class="stat-value loss-text">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="card-icon">💱</span> <span data-i18n="perCurrency">هر کرنسۍ لپاره</span></h2>
+      <div id="perCurrencyProfit" class="per-currency-profit"></div>
+    </div>
+  </section>
+
+  <!-- ===== Tab 5: Reports (NEW) ===== -->
+  <section class="tab-content" id="tab-reports">
+    <div class="card">
+      <h2><span class="card-icon">📈</span> <span data-i18n="reports">راپورونه</span></h2>
+
+      <div class="report-filter">
+        <button class="filter-btn active" data-range="today" data-i18n="today">نن</button>
+        <button class="filter-btn" data-range="week" data-i18n="thisWeek">دا اونۍ</button>
+        <button class="filter-btn" data-range="month" data-i18n="thisMonth">دا میاشت</button>
+        <button class="filter-btn" data-range="all" data-i18n="allTime">ټول وخت</button>
+      </div>
+
+      <div class="report-summary">
+        <div class="report-stat">
+          <div class="report-stat-label" data-i18n="tradesCount">سوداګري:</div>
+          <div id="reportTradesCount" class="report-stat-value">0</div>
+        </div>
+        <div class="report-stat">
+          <div class="report-stat-label" data-i18n="totalVolume">ټول حجم:</div>
+          <div id="reportTotalVolume" class="report-stat-value">0 AFN</div>
+        </div>
+        <div class="report-stat">
+          <div class="report-stat-label" data-i18n="netProfit">خالص ګټه:</div>
+          <div id="reportNetProfit" class="report-stat-value profit-text">0 AFN</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2><span class="card-icon">📋</span> <span data-i18n="tradeHistory">د سوداګرۍ تاریخ</span></h2>
+        <button id="exportBtn" class="btn-secondary btn-sm" data-i18n="export">📤 ایکسپورټ</button>
+      </div>
+      <div id="allTrades" class="trades-list"></div>
+    </div>
+  </section>
+
+  <!-- ===== Tab 6: About / Developer ===== -->
+  <section class="tab-content" id="tab-about">
+    <div class="card about-card">
+      <div class="about-photo-wrap">
+        <img src="developer.jpg" alt="نعمان الله بهار" class="about-photo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="about-avatar" style="display:none;">👨‍💻</div>
+      </div>
+      <h2 class="about-name" id="aboutName">نعمان الله بهار</h2>
+      <p class="about-title" data-i18n="aboutTitle">د اپلیکیشن جوړونکی</p>
+
+      <div class="about-info">
+        <a class="about-row about-row-link" href="mailto:nemanullahbahar3@gmail.com">
+          <span class="about-icon">📧</span>
+          <span class="about-label" data-i18n="devEmail">بریښنالیک:</span>
+          <span class="about-value">nemanullahbahar3@gmail.com</span>
+        </a>
+        <a class="about-row about-row-link" href="https://wa.me/93778425738" target="_blank" rel="noopener">
+          <span class="about-icon">📱</span>
+          <span class="about-label" data-i18n="devWhatsapp">واتساپ:</span>
+          <span class="about-value">0778425738</span>
+        </a>
+        <div class="about-row">
+          <span class="about-icon">💱</span>
+          <span class="about-label" data-i18n="devApp">اپلیکیشن:</span>
+          <span class="about-value" data-i18n="appName">نرخونو کنټرولر v4.0</span>
+        </div>
+        <div class="about-row">
+          <span class="about-icon">📌</span>
+          <span class="about-label" data-i18n="devVersion">نسخه:</span>
+          <span class="about-value">4.0.0</span>
+        </div>
+        <div class="about-row">
+          <span class="about-icon">🟢</span>
+          <span class="about-label" data-i18n="devMode">حالت:</span>
+          <span class="about-value badge-offline" data-i18n="offline">100% آفلاین</span>
+        </div>
+      </div>
+
+      <div class="about-footer">
+        <p>❤️ <span data-i18n="madeWith">په مینه جوړ شوی</span></p>
+        <p class="about-sub" data-i18n="aboutTagline">ستاسو باور، زما مسؤولیت</p>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ===== Add Currency Modal ===== -->
+<div id="addModal" class="modal hidden">
+  <div class="modal-content">
+    <h3><span class="card-icon">➕</span> <span data-i18n="addNewCurrency">نوې کرنسی اضافه کړئ</span></h3>
+    <div class="input-row">
+      <label data-i18n="currencyName">نوم</label>
+      <input type="text" id="newCurrencyName" placeholder="مثال: یورو">
+    </div>
+    <div class="input-row">
+      <label data-i18n="currencyCode">کوډ</label>
+      <input type="text" id="newCurrencyCode" placeholder="EUR" maxlength="5">
+    </div>
+    <div class="input-row">
+      <label data-i18n="currencySymbol">سمبول</label>
+      <input type="text" id="newCurrencySymbol" placeholder="€" maxlength="3">
+    </div>
+    <div class="input-row">
+      <label data-i18n="buyRate">د خرید نرخ (افغانۍ)</label>
+      <input type="number" id="newBuyRate" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="input-row">
+      <label data-i18n="sellRate">د فروش نرخ (افغانۍ)</label>
+      <input type="number" id="newSellRate" inputmode="decimal" placeholder="0">
+    </div>
+    <div class="modal-actions">
+      <button id="cancelAddBtn" class="btn-secondary" data-i18n="cancel">لغوه</button>
+      <button id="confirmAddBtn" class="btn-primary" data-i18n="add">اضافه کړئ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Confirm Delete Modal ===== -->
+<div id="deleteModal" class="modal hidden">
+  <div class="modal-content">
+    <h3><span class="card-icon">🗑️</span> <span data-i18n="confirmDelete">حذف کړئ؟</span></h3>
+    <p id="deleteMessage" class="modal-text"></p>
+    <div class="modal-actions">
+      <button id="cancelDeleteBtn" class="btn-secondary" data-i18n="cancel">لغوه</button>
+      <button id="confirmDeleteBtn" class="btn-danger" data-i18n="delete">حذف</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
